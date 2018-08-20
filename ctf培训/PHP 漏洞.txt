@@ -1,0 +1,309 @@
+﻿CTF中遇到的php
+1.if(eregi("hackerDJ",$_GET[id])) {   //eregi字符串对比
+
+  echo("<p>not allowed!</p>");
+
+  exit();
+
+ 
+
+2.isset 判断变量是否定义过
+
+ 
+
+3.比较符
+
+$a==$b   松散比较
+
+===      完全等于
+
+=        大于等于
+
+!=       如果类型转换后$a不等于$b,Ture
+
+!==      不完全等于，如果$a不等于$b或者它们类型不同，Ture
+
+ 
+
+当php进行一些数学计算的时候，当有一个对比参数是整数的时候,会把另外一个参数强制转换为整数。
+
+1 var_dump(0 == '0'); // true
+
+2 var_dump(0 == 'abcdefg'); // true
+
+3 var_dump(0 === 'abcdefg'); // false
+
+4 var_dump(1 == '1abcdef'); // true
+
+* bool类型的true跟任意字符串可以弱类型相等
+
+ 
+
+在某些情况下，PHP会把类数值数据（如含有数字的字符串等）转换成数值处理，== 运算符就是其中之一。在使用 == 运算符对两个字符串进行松散比较时，PHP会把类数值的字符串转换为数值进行比较，如果参数是字符串，则返回字符串中第一个不是数字的字符之前的数字串所代表的整数值。比如: '3' == '3ascasd'结果为true。
+
+4.eval可以直接执行php代码
+
+5.intval   将变量转成整数类型
+
+6.ereg()函数用指定的模式搜索一个字符串中指定的字符串,如果匹配成功返回true,否则,则返回false。搜索字母的字符是大小写敏感的。
+
+int ereg(string pattern, string originalstring, [array regs]);
+
+例，$email_id = "admin@tutorialspoint.com";
+
+    $retval = ereg("(\.)(com$)", $email_id);
+
+ 
+
+ereg()限制password的格式，只能是数字或者字母。但ereg()函数存在NULL截断漏洞，可以使用%00绕过验证。
+
+ 
+
+这里ereg有两个漏洞：
+
+ 
+
+    ①%00截断及遇到%00则默认为字符串的结束
+
+    ②当ntf为数组时它的返回值不是FALSE
+
+ 
+
+7.strpos — 查找字符串首次出现的位置：
+
+例，$mystring = 'abc';
+
+    $findme   = 'a';
+
+    $pos = strpos($mystring, $findme);
+
+ 
+
+8.$_GET可以接受数组但MD5
+
+md5（）不能处理数组结构的数据
+
+利用此漏洞构造index.php?a[]=1&b[]=2
+
+构造?a[]=1&b[]=2这样md5函数无法处理数组返回false完成匹配得到flag
+
+例，
+
+if (isset($_GET['a']) and isset($_GET['b'])) {
+
+if ($_GET['a'] != $_GET['b'])
+
+if (md5($_GET['a']) === md5($_GET['b']))
+
+die('Flag: '.$flag);
+
+else
+
+print 'Wrong.';
+
+}
+
+9.<?php
+
+if($_POST[user] && $_POST[pass]) {
+
+    mysql_connect(SAE_MYSQL_HOST_M . ':' . SAE_MYSQL_PORT,SAE_MYSQL_USER,SAE_MYSQL_PASS);
+
+  mysql_select_db(SAE_MYSQL_DB);
+
+  $user = trim($_POST[user]);
+
+  $pass = md5(trim($_POST[pass]));
+
+  $sql="select user from ctf where （user='".$user."') and (pw='".$pass."')";
+
+    echo '</br>'.$sql;
+
+  $query = mysql_fetch_array(mysql_query($sql));
+
+  if($query[user]=="admin") {
+
+      echo "<p>Logged in! flag:******************** </p>";
+
+  }
+
+  if($query[user] != "admin") {
+
+    echo("<p>You are not admin!</p>");
+
+  }
+
+}
+
+echo $query[user];
+
+?>
+
+ 
+
+看见括号了没，我一直没看见··········
+
+最简单的注入 和password无关
+
+user=admin ‘)# //注意括号要闭合不然报错 我就是被坑的。
+
+ 
+
+10.PHP对于这个@符号，之前很少在意，只知道它是错误屏蔽的符号
+
+ 
+
+11.一般形式：strcmp(字符串1，字符串2)
+
+说明：
+
+当s1<s2时，返回为负数 注意不是-1   true
+
+当s1==s2时，返回值= 0              false
+
+当s1>s2时，返回正数 注意不是1      true
+
+ 
+
+ 
+
+11.strlen    判断字符串长度
+
+例，else if (strlen($_GET['password']) < 8 && $_GET['password'] > 9999999)
+
+科学记数法，由于要使密码长度小于8或值大于9999999，可以使用1e8或1e9满足条件。
+
+ 
+
+12.文件包含漏洞
+
+php://filter 是一种元封装器， 设计用于数据流打开时的筛选过滤应用。
+
+同时我也借此机会学到了文件读取的相关知识。
+
+ 
+
+    include “test.php”php文件包含，在执行流中插入写在其他文件中的有用的代码。读取的时候也是数据流形式，因此可以使用php://filter进行过滤，返回值为0,1。
+
+    readfile(“test.php”)是将文件以数据流的形式读取过来，并不会执行，但会在前台浏览器上进行解析。返回值是字节数多少。
+
+ 
+
+    file_get_contents(“test.php”)返回值为文本内容
+
+ 
+
+    此题运用的就是关于数据流过滤的文件包含，我们一般在进行文件包含的时候都这么写include “test.php”获得的就是test.php直接解析出来。但如果运用readfile(“test.php”) 就不进行解析，导致无法在浏览器前台进行显示。那么问题来了看题
+
+ 
+
+简单的重复一下他的意思
+
+注解：
+
+1.php://filter/可用于处理打开的数据流，起到过滤作用。如果源文件为.php则很有可能在前台显示不出来。
+
+2.此时我们采用的方法是，先让文件转化为base64格式（convert.base64-encode）然后再输出，这样不论是什么格式的文件都可以在前台输出。
+
+3.再次解码就可得到源代码，怎么样是不是很神奇啊！
+
+例http://4.chinalover.sinaapp.com/web7/index.php?file=php://filter/read=convert.base64-encode/resource=index.php
+
+ 
+
+13.extract 变量覆盖
+
+总的来说是extract() 函数从数组中将变量导入到当前的符号表，典型的变量覆盖。
+
+ 
+
+例，
+
+<?php if ($_SERVER["REQUEST_METHOD"] == "POST") { ?>
+
+  <?php
+
+  extract($_POST);
+
+  if ($pass == $thepassword_123) { ?>
+
+      <div class="alert alert-success">
+
+          <code><?php echo $theflag; ?></code>
+
+      </div>
+
+    <?php } ?>
+
+ <?php } ?>
+
+ if ($pass == $thepassword_123) { ?>
+
+ 只需要覆盖$pass、$thepassword_123这两个变量使他们相等即可。
+
+ 
+
+14.php上传截断
+
+ 
+
+15.set_time_limit(0);
+
+括号里边的数字是执行时间，如果为零说明永久执行直到程序结束，如果为大于零的数字，则不管程序是否执行完成，到了设定的秒数，程序结束。
+
+ 
+
+16.PHP变量覆盖
+
+extract() 函数从数组中将变量导入到当前的符号表。
+
+该函数使用数组键名作为变量名，使用数组键值作为变量值。针对数组中的每个元素，将在当前符号表中创建对应的一个变量。
+
+ 
+
+<?php 
+ if ($_SERVER["REQUEST_METHOD"] == "POST") { ?>
+    extract($_POST);
+    if ($pass == $thepassword_123) { 
+        echo $theflag;
+    }
+?>
+
+在第三行, 运用了extract()函数, 将POST方式获得的变量导入到当前的符号表中. 
+
+然后判断$pass 与$thepassword_123两个变量的内容是否相等.
+
+但是, 由于extract()函数的不足之处, 导致这段代码存在一个变量覆盖漏洞. 
+
+只要我们这样构造url
+
+/?pass =&thepassword_123=
+
+那么, 我们可以发现, $pass 变量和$thepassword_123变量的内容都会被设置成空字符串.这样就使得两个变量被覆盖。
+
+ 
+
+17.PHP超全局变量
+
+$GLOBALS — 引用全局作用域中可用的全部变量
+
+$GLOBALS 这种全局变量用于在 PHP 脚本中的任意位置访问全局变量（从函数或方法中均可）。
+
+PHP 在名为 $GLOBALS[index] 的数组中存储了所有全局变量。变量的名字就是数组的键。
+
+例，
+
+<?php
+error_reporting(0);
+include "flag1.php";
+highlight_file(__file__);
+if(isset($_GET['args'])){
+    $args = $_GET['args'];
+    if(!preg_match("/^\w+$/",$args)){
+        die("args error!");
+    }
+    eval("var_dump($$args);");//这里涉及超全局变量的使用
+}
+?>
+
+构造特殊url：http://120.24.86.145:8004/index1.php?args=GLOBALS
